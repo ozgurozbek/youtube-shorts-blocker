@@ -1,0 +1,43 @@
+#extension-container {
+    font-family: Arial, sans-serif;
+    width: 250px;
+    text-align: center;
+    padding: 10px;
+    background-color: #202020;
+    color: white;
+    border-radius: 8px;
+  }
+  
+  #extension-logo {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+  }
+  
+  #blocked-counter {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  
+  button {
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    background-color: #ff0000;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+  }
+  
+  textarea {
+    width: 90%;
+    height: 100px;
+    margin-bottom: 10px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background-color: #303030;
+    color: white;
+    resize: none;
+    font-size: 12px;
+  }
+  

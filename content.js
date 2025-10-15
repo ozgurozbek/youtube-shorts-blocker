@@ -82,19 +82,60 @@ function removePlayables() {
   });
 }
 
-// Filter videos by keywords
+// Filter videos by keywords and custom selectors
 function filterVideos() {
   if (!extensionEnabled || filterKeywords.length === 0) return;
 
-  const videoTitles = document.querySelectorAll('#video-title');
-  videoTitles.forEach((title) => {
-    const parent = title.closest('ytd-video-renderer, ytd-grid-video-renderer, ytd-rich-item-renderer');
-    if (parent && filterKeywords.some((keyword) => title.textContent.toLowerCase().includes(keyword.toLowerCase()))) {
-      parent.remove();
-      blockedCount++;
-      saveBlockedCount();
-    }
+  // Default selectors for video titles and containers
+  const defaultContainers = [
+    'ytd-video-renderer',
+    'ytd-grid-video-renderer',
+    'ytd-rich-item-renderer',
+  ];
+
+  // Selectors for title elements inside containers
+  const titleSelectors = [
+    '#video-title',
+    'a.yt-lockup-metadata-view-model__title',
+    'a.yt-simple-endpoint.style-scope.ytd-rich-grid-media',
+  ];
+
+  // Remove videos matching keywords in default containers
+  defaultContainers.forEach((containerSelector) => {
+    const containers = document.querySelectorAll(containerSelector);
+    containers.forEach((container) => {
+      let titleText = '';
+      for (const titleSelector of titleSelectors) {
+        const titleElem = container.querySelector(titleSelector);
+        if (titleElem && titleElem.textContent) {
+          titleText = titleElem.textContent.toLowerCase();
+          break;
+        }
+      }
+      if (titleText && filterKeywords.some((keyword) => titleText.includes(keyword.toLowerCase()))) {
+        container.remove();
+        blockedCount++;
+        saveBlockedCount();
+      }
+    });
   });
+
+  // Also filter by user-provided custom selectors
+  if (customSelectors && customSelectors.length > 0) {
+    customSelectors.forEach((selector) => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach((elem) => {
+        const text = elem.textContent ? elem.textContent.toLowerCase() : '';
+        if (filterKeywords.some((keyword) => text.includes(keyword.toLowerCase()))) {
+          // Remove the closest container element or the element itself
+          const container = elem.closest('ytd-video-renderer, ytd-grid-video-renderer, ytd-rich-item-renderer') || elem;
+          container.remove();
+          blockedCount++;
+          saveBlockedCount();
+        }
+      });
+    });
+  }
 }
 
 // Listen for messages from the popup
